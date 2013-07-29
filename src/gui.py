@@ -20,33 +20,35 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from dtk.ui.skin_config  import skin_config
-from dtk.ui.application  import Application
+from dtk.ui.skin_config import skin_config
+from dtk.ui.application import Application
 from dtk.ui.utils import propagate_expose
-from widget.movie_paned  import Paned
+from widget.movie_paned import Paned
 from widget.playlistview import PlayListView
-from widget.toolbar      import ToolBar
-from widget.draw         import draw_pixbuf
-from widget.color        import alpha_color_hex_to_cairo
+from widget.toolbar import ToolBar
+from widget.draw import draw_pixbuf
+from widget.color import alpha_color_hex_to_cairo
 from widget.bottom_toolbar import BottomToolBar
-from widget.play_menus   import PlayMenus
-from widget.utils        import get_system_tooptil_icon
-from widget.movie_menu   import ScreenMidCombo
+from widget.play_menus import PlayMenus
+from widget.utils import get_system_tooptil_icon
+from widget.movie_menu import ScreenMidCombo
 from locales import _
 import pynotify
 import gtk
 from deepin_utils.file import get_parent_dir
 import os
 
+
 class GUI(object):
-    '''Media Player GUI kernel code.核心界面代码'''
-    def __init__(self):        
-        '''application.'''
+    """Media Player GUI kernel code.核心界面代码"""
+
+    def __init__(self):
+        """application."""
         self.__init_values()
         self.app = Application(False)
         # application set.
-        app_w, app_h = 800, 570 # 初始化宽,高.
-        min_app_w, min_app_h = 480, 300 # 防止超过,界面布局被破坏.
+        app_w, app_h = 800, 570  # 初始化宽,高.
+        min_app_w, min_app_h = 480, 300  # 防止超过,界面布局被破坏.
         self.app.set_default_size(min_app_w, min_app_h)
         self.app.window.set_default_size(app_w, app_h)
         # self.app.window.resize
@@ -56,8 +58,8 @@ class GUI(object):
         # set titlebar.
         self.app.add_titlebar(["theme", "menu", "max", "min", "close"],
                               os.path.join(os.path.join(image_dir, "logo.png")),
-                              _("DPlayer"), " ", 
-                              add_separator = False)
+                              _("DPlayer"), " ",
+                              add_separator=False)
         #
         self.play_menus = PlayMenus()
         # 设置主题菜单.
@@ -74,7 +76,7 @@ class GUI(object):
         self.screen_mid_combo = ScreenMidCombo()
         self.mid_combo_event.set_visible_window(True)
         self.mid_combo_event.add(self.screen_mid_combo)
-        '''movie screen. 电影播放屏幕.'''
+        # movie screen. 电影播放屏幕.
         # 播放屏幕和播放列表的HBOX.
         self.play_list_view = PlayListView()
         self.screen_paned = Paned()
@@ -104,7 +106,7 @@ class GUI(object):
         self.app.main_box.pack_start(self.main_ali, True, True)
 
     def __init_values(self):
-        self.child2_show_check = False # True 显示 False 隐藏
+        self.child2_show_check = False  # True 显示 False 隐藏
 
     ################################################################################
     ##
@@ -126,35 +128,35 @@ class GUI(object):
             h = app_h
         else:
             h = pixbuf.get_height() - bottom_h
-        # 当图片小于窗口宽度的时候,拉伸图片.
+            # 当图片小于窗口宽度的时候,拉伸图片.
         if pixbuf.get_width() < app_w:
             pixbuf = pixbuf.scale_simple(app_w,
-                                pixbuf.get_width(),
-                                gtk.gdk.INTERP_BILINEAR)
+                                         pixbuf.get_width(),
+                                         gtk.gdk.INTERP_BILINEAR)
 
-        draw_pixbuf(cr, 
-                    pixbuf, 
-                    0, 
-                    -(h))
+        draw_pixbuf(cr,
+                    pixbuf,
+                    0,
+                    -h)
 
     def not_in_system_widget(self):
         # 判断handle toolbar 是否显示出来了.
-        return (not self.screen_paned.show_check and 
+        return (not self.screen_paned.show_check and
                 not self.screen_paned.top_win_show_check and
-                not self.screen_paned.bottom_win_show_check) 
+                not self.screen_paned.bottom_win_show_check)
 
     def set_paned_handle(self, event):
         if self.screen_paned.show_check and (0 <= event.x <= 7):
-            if self.screen_paned.get_move_width() == 0: # child2 隐藏和显示.
+            if self.screen_paned.get_move_width() == 0:  # child2 隐藏和显示.
                 self.play_control_panel.play_list_btn.button.set_active(True)
             else:
                 self.play_control_panel.play_list_btn.button.set_active(False)
 
     def close_right_child2(self):
-        self.screen_paned.set_jmp_end() # 关闭右侧控件(播放列表..).
+        self.screen_paned.set_jmp_end()  # 关闭右侧控件(播放列表..).
 
     def open_right_child2(self):
-        self.screen_paned.set_jmp_start() # 打开右侧控件 (播放列表...).
+        self.screen_paned.set_jmp_start()  # 打开右侧控件 (播放列表...).
 
     def hide_handle(self):
         self.screen_paned.set_visible_handle(False)
@@ -180,7 +182,7 @@ class GUI(object):
             msg.show()
         except Exception, e:
             print "message[error]:", e
-    
+
     def tooltip_change_style(self, font, font_size):
         self.screen_paned.change_style(font, font_size)
 
@@ -194,6 +196,3 @@ class GUI(object):
         #
         propagate_expose(widget, event)
         return True
-
-
-
