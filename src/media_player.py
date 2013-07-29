@@ -914,6 +914,7 @@ class MediaPlayer(object):
         if self.play_list.get_index() != -1:
             list_view = self.gui.play_list_view.list_view
             name = list_view.items[self.play_list.get_index()].sub_items[0].text
+            self.gui.app.set_title(name)
         # 设置 dvd, vcd... media device.
         if self.ldmp.player.uri.startswith("dvd"):
             device_name = list_view.items[self.play_list.get_index()].sub_items[0].text

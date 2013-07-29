@@ -35,7 +35,9 @@ session_bus = dbus.SessionBus()            #
 name = dbus.service.BusName("org.mpris.MediaPlayer2.SampleService" + app.dbus_id, session_bus)
 app_ser = SomeObject(session_bus, "/org/mpris/MediaPlayer2")
 app_ser.set_dmp(app)                  #
+gtk.threads_enter()
 gtk.main()                                 #
+gtk.threads_leave()
 ############################################
 # The core code reference Gmtk code.       #
 ############################################
