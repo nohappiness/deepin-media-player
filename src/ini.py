@@ -27,9 +27,9 @@ import os
 
 class Config(gobject.GObject):
     __gsignals__ = {
-        "config-changed" : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                            (gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING))
-        }
+        "config-changed": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                          (gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING))
+    }
 
     def __init__(self, ini_path):
         gobject.GObject.__init__(self)
@@ -49,14 +49,14 @@ class Config(gobject.GObject):
             self.fp = open(ini_path, "r")
             self.init_config()                                            
         except Exception, e:    
-            print "%s" % (e)
+            print "%s" % e
                             
     def init_config(self):        
         
         while True:
             ch = self.fp.read(1)
             
-            if not ch: # Read over.
+            if not ch:  # Read over.
                 break
             
             if self.section_bool:
@@ -71,7 +71,7 @@ class Config(gobject.GObject):
                     else:    
                         self.argv_save_ch += ch
                         
-                else:# Read argv.        
+                else:  # Read argv.
                     if "\n" == ch:
                         self.split(self.argv_save_ch, "=")
                         self.argv_save_ch = ""
@@ -84,7 +84,7 @@ class Config(gobject.GObject):
                         ch = self.fp.read(1)                    
                     
                         if "\n" == ch:
-                            self.section_dict[self.section_save_ch] = {} # save section name.
+                            self.section_dict[self.section_save_ch] = {}  # save section name.
                             break
                     
                         if "]" == ch:
@@ -111,10 +111,10 @@ class Config(gobject.GObject):
         argv = str(argv)
         value = str(value)
         
-        if not self.section_dict.has_key(section):
-            self.section_dict[section] = {argv:str(value)}
+        if not section in self.section_dict:
+            self.section_dict[section] = {argv: str(value)}
         else:    
-            if not self.section_dict[section].has_key(argv):
+            if not argv in self.section_dict[section]:
                 self.section_dict[section][argv] = str(value)
             else:    
                 self.section_dict[section][argv] = str(value)
@@ -125,24 +125,24 @@ class Config(gobject.GObject):
         section = str(section)
         argv = str(argv)
         
-        if self.section_dict.has_key(section):
-            if self.section_dict[section].has_key(argv):                
+        if section in self.section_dict:
+            if argv in self.section_dict[section]:
                 return self.section_dict[section][argv] 
             
     def get_argvs(self, section):    
         section = str(section)
         
-        if self.section_dict.has_key(section):
+        if section in self.section_dict:
             return self.section_dict[section]
         
     def get_argv_bool(self, section, argv):    
-        return self.section_dict.has_key(str(section)) and self.section_dict[section].has_key(str(argv))
+        return str(section) in self.section_dict and str(argv) in self.section_dict[section]
     
     def modify_argv(self, section, argv, new_argv, new_value):
         section = str(section)
         argv = str(argv)
         
-        if self.section_dict.has_key(section) and self.section_dict[section].has_key(argv):
+        if section in self.section_dict and argv in self.section_dict[section]:
             del self.section_dict[section][argv]
             self.section_dict[section][new_argv] = new_value
             return True
@@ -152,7 +152,7 @@ class Config(gobject.GObject):
     def save(self):
         fp = open(self.ini_path, "w")
         for section_key in self.section_dict.keys():
-            section_string = "[%s]" % (section_key)
+            section_string = "[%s]" % section_key
             fp.write(section_string + "\n") # Save section.
             for argv_key in self.section_dict[section_key]:                
                 argv_string = "%s = %s" % (argv_key, self.section_dict[section_key][argv_key])
