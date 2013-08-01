@@ -25,6 +25,7 @@ from ini   import Config
 from locales import _
 import os
 
+
 def init_media_player_config(config):
     path = get_config_path()
     print "init_media_player_config...", path

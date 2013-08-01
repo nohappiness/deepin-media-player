@@ -23,21 +23,22 @@
 import gtk
 import gobject
 
+
 class Timer(gobject.GObject):
     __gsignals__ = {
-        "Tick" : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                  ())
-        }        
+        "Tick": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
+    }
+
     def __init__(self, interval_=0):
         gobject.GObject.__init__(self)
         self.__interval = interval_
-        self.__enabled  = False # True : 开启 ; False : 关闭.
+        self.__enabled = False  # True : 开启 ; False : 关闭.
         self.__timer_id = None
         
-    ''' Enabled [get/set] methed
-        enabled_ : bool value.
-        return : bool value.
-    '''    
+    # ''' Enabled [get/set] methed
+    #     enabled_ : bool value.
+    #     return : bool value.
+    # '''
     @property    
     def Enabled(self):
         return self.__enabled        
@@ -51,10 +52,10 @@ class Timer(gobject.GObject):
     def Enabled(self):    
         return self.__enabled
     
-    ''' Interval [get/set] mothed
-        interval_ : int value.
-        return : int value.
-    '''    
+    # ''' Interval [get/set] mothed
+    #     interval_ : int value.
+    #     return : int value.
+    # '''
     @property
     def Interval(self):            
         return self.__interval
@@ -77,16 +78,17 @@ class Timer(gobject.GObject):
     def __run_timer(self):
         if not self.__timer_id:
             self.__timer_id = gtk.timeout_add(
-                                  self.__interval, 
-                                  self.__run_timer_send_function)
+                self.__interval,
+                self.__run_timer_send_function
+            )
                     
     def __run_timer_send_function(self):
-        if self.__enabled: # send connect.
+        if self.__enabled:  # send connect.
             self.emit("Tick")
         return True    
         
 if __name__ == "__main__":
-    import time
+    # import time
     
     def btn1_clicked(widget):
         # print timer.Interval
@@ -97,7 +99,7 @@ if __name__ == "__main__":
         # timer.Interval = 30
         timer.Enabled = False
         
-    def timer_tick(tick):    
+    def timer_tick(timer):
         print "i love c and linux."
         # timer.Enabled = False
         # timer.Interval = 5000
@@ -113,8 +115,8 @@ if __name__ == "__main__":
     # init widget.
     win = gtk.Window(gtk.WINDOW_TOPLEVEL)
     btn_hbox = gtk.HBox()
-    btn1 = gtk.Button("改变时间")
-    btn2 = gtk.Button("改变时间")    
+    btn1 = gtk.Button("定时器启动")
+    btn2 = gtk.Button("定时器关闭")
     # button connect.
     btn1.connect("clicked", btn1_clicked)
     btn2.connect("clicked", btn2_clicked)

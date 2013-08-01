@@ -26,6 +26,7 @@ import gtk
 import locale
 import os
 
+
 def init_user_guide(callback=None, show_start_button=False):
     # Get language in current environment.
     (lang, _) = locale.getdefaultlocale()
@@ -38,7 +39,7 @@ def init_user_guide(callback=None, show_start_button=False):
         
     # Get image directory.
     image_dir = os.path.join(get_parent_dir(__file__, 1), "user_guide")
-    lang_dir  = os.path.join(image_dir, slide_lang)
+    lang_dir = os.path.join(image_dir, slide_lang)
 
     # Init user guide.
     user_guide = Wizard(
@@ -50,7 +51,7 @@ def init_user_guide(callback=None, show_start_button=False):
             os.path.join(lang_dir, "start_press.png"),),
         show_start_button,
         callback
-        )
+    )
     
     # Show user guide.
     user_guide.show_all()

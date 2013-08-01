@@ -90,8 +90,6 @@ drag_dict = {gtk.gdk.WINDOW_EDGE_SOUTH_EAST: gtk.gdk.BOTTOM_RIGHT_CORNER,  # 右
 
 class MediaPlayer(object):
     def __init__(self):
-        self.__init_config_file()
-        #
         self.first_run = False
         self.__init_values()
         # init double timer.
@@ -100,12 +98,8 @@ class MediaPlayer(object):
         self.__init_gui_app_events()
         self.__init_gui_screen()
         self.__init_screen_tooltip()
-        # 判断是否存在这个配置文件.
-        if not os.path.exists(os.path.join(get_config_path(), "deepin_media_config.ini")):
-            init_media_player_config(self.config)
-            init_user_guide(self.start, True)
-            self.first_run = True
-            # init dubs id.
+        self.__init_config_file()
+        # init dubs id.
         self.__init_dbus_id()
         # show gui window.
         if not self.first_run:
@@ -115,10 +109,14 @@ class MediaPlayer(object):
         self.hide_cursor_timeout_id = None
 
     def __init_config_file(self):
-        # 配置文件.
+        # 判断是否存在这个配置文件.
         self.ini = Config(get_home_path() + "/.config/deepin-media-player/config.ini")
         self.config = Config(get_home_path() + "/.config/deepin-media-player/deepin_media_config.ini")
         self.config.connect("config-changed", self.modify_config_section_value)
+        if not os.path.exists(os.path.join(get_config_path(), "deepin_media_config.ini")):
+            init_media_player_config(self.config)
+            init_user_guide(self.start, True)
+            self.first_run = True
 
     def __init_dbus_id(self):  # 初始化DBUS ID 唯一值.
         self.is_exists_check = False
@@ -217,9 +215,11 @@ class MediaPlayer(object):
 
     def __init_gui_app_events(self):
         """application events init."""
+        # FIXME: why use empty event for minimize_button ??
         self.gui.app.titlebar.min_button.connect("clicked", self.app_window_min_button_clicked)
         self.gui.app.window.add_events(gtk.gdk.ALL_EVENTS_MASK)
         self.gui.app.window.connect("destroy", self.app_window_quit)
+        # FIXME: what is configure-event ?
         self.gui.app.window.connect("configure-event", self.app_window_configure_event)
         self.gui.app.window.connect("check-resize", self.app_window_check_resize)
         self.gui.app.window.connect("button-press-event", self.app_window_button_press_event)
@@ -240,7 +240,8 @@ class MediaPlayer(object):
             if self.ldmp.player.state:
                 percent_num = int((float(screen_w * screen_h) / (video_w * video_h)) * 100)
                 self.show_messagebox("%sx%s(%s%s)" % (screen_w, screen_h, percent_num, "%"), screen=True)
-        except Exception, e:
+        except Exception, e:  # FIXME: use correct exception.
+            print type(e)
             print "media_player.py=>app_window_size_request[error]:", e
 
     def app_window_button_press_event(self, widget, event):
@@ -1073,7 +1074,7 @@ class MediaPlayer(object):
                 path = child.text.strip()
             elif child.tag == "time":
                 time = child.text.strip()
-        return (path, time)
+        return path, time
 
     def read_xml(self, path):
         import xml.etree.ElementTree

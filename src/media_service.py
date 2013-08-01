@@ -160,14 +160,16 @@ DATA_FORMAT = \
 class DemoException(dbus.DBusException):
     _dbus_error_name = 'com.deepin_media_player.DemoException'
 
+
 class SomeObject(dbus.service.Object):
     properties = {'Identity': _('DPlayer'), 'DesktopEntry': 'deepin-media-player'}
     player_properties = {'PlaybackStatus': 'Stopped', 'Volume': 1.0, 'Metadata': {'xesam:title': ""}}
+
     def __init__(self, bus, path):
         dbus.service.Object.__init__(self, bus, path)
 
-    def set_dmp(self, app):
-        self.this  = app
+    def set_dbus_media_player(self, app):
+        self.this = app
         #
         self.ldmp = self.this.ldmp
         self.play_list = self.this.play_list
@@ -179,7 +181,7 @@ class SomeObject(dbus.service.Object):
         self.ldmp.connect("end-media-player",   self.dbus_ldmp_end_media_player)
 
     def dbus_ldmp_pause_play(self, ldmp, check):
-        if 0 == check: # 暂停.
+        if 0 == check:  # 暂停.
             self.player_properties["PlaybackStatus"] = "Paused"
         else:
             self.player_properties["PlaybackStatus"] = "Playing"
